@@ -4,6 +4,8 @@
 package com.tallkids.picsorter.util;
 
 import java.io.File;
+import java.text.DateFormatSymbols;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -12,7 +14,7 @@ import java.util.Date;
  */
 public class FileInfoUtil {
 
-	public Date checkFileCreationDate(File file){
+	public Date checkFileLastModifiedDate(File file){
 		
 		long lastModifiedDate = file.lastModified();
 		Date creationDate = new Date(lastModifiedDate);
@@ -25,5 +27,35 @@ public class FileInfoUtil {
 		String name = file.getName();
 		
 		return name;
+	}
+
+	public String checkFolderName(File testFile) {
+		
+		
+		String folderName = "";
+		Date lastModifiedDate = checkFileLastModifiedDate(testFile);
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(lastModifiedDate);
+		int month = cal.get(Calendar.MONTH);
+		
+		DateFormatSymbols dfs = new DateFormatSymbols();
+        String[] months = dfs.getMonths();
+        
+        String monthName = months[month];
+		
+        int monthNum = month + 1;
+        
+        if(monthNum < 10)
+        {
+        	folderName = "0" + monthNum + "-" + monthName;
+        }
+        else
+        {
+        	folderName = monthNum + "-" + monthName;
+        }
+        
+        
+		return folderName;
 	}
 }

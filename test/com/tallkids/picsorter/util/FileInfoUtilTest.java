@@ -20,12 +20,12 @@ public class FileInfoUtilTest {
 	FileInfoUtil fileInfoUtil = new FileInfoUtil();
 	
 	@Test
-	public void testCheckFileCreationDate(){
+	public void testCheckFileLastModifiedDate(){
 		
 		
 		File testFile = getTestFile();
 		
-		Date creationDate = fileInfoUtil.checkFileCreationDate(testFile);
+		Date creationDate = fileInfoUtil.checkFileLastModifiedDate(testFile);
 		long testDateLong = 1247549551658L;
 		Date testDate = new Date(testDateLong);
 		
@@ -47,6 +47,38 @@ public class FileInfoUtilTest {
 		
 	}
 	
+	@Test
+	public void testCheckFolderName(){
+		
+		
+		File testFile = getTestFile();
+		
+		String folderName = fileInfoUtil.checkFolderName(testFile);
+		
+		assertNotNull(folderName);
+		assertEquals("Name is not equal", "07-July", folderName);
+		
+	}
+	
+	@Test
+	public void testCreateFolder(){
+		
+		
+		//TODO test
+		
+	}
+	
+	@Test
+	public void testCopyFileToFolder(){
+		
+		
+		//TODO test
+		
+	}
+	
+	//TODO Add tests for null, no date, boundary
+	
+	@SuppressWarnings("unused")
 	private File getTestFile()
 	{
 		String filename = "Desert.jpg";
@@ -56,10 +88,6 @@ public class FileInfoUtilTest {
 		String workingDir = homeDir + File.separator + "Desktop" + File.separator + "workspace";
 		
 		finalfile = currDir + File.separator + filename;
-		
-		System.out.println("Current path: " + currDir);
-		System.out.println("Working filepath : " + workingDir);
-		System.out.println("Final filepath : " + finalfile);
 		
 		File file = new File(finalfile);
 		
