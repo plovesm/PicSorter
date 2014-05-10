@@ -3,7 +3,9 @@
  */
 package com.tallkids.picsorter.util;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 
@@ -17,6 +19,8 @@ public class FileWalker {
 	private String sourceDir = "";
 	private int missingFileCount = 0;
     
+	private final static int BLOCK_SIZE = 65536;
+		
     private boolean checkForFileMatch(File activeFile, String path) {
 
         File root = new File(path);
@@ -26,12 +30,16 @@ public class FileWalker {
         {
 	        
 	        for (File f : list) {
-	            if (f.isDirectory()) {
+	            
+	        	System.out.println("Checking Target: " + f.getAbsolutePath());
+	        	
+	        	if (f.isDirectory()) {
 	            	checkForFileMatch(activeFile, f.getAbsolutePath());
 	            }
 	            else {
 	            	try {
-						if(Files.isSameFile(f.toPath(), activeFile.toPath())) //f.compareTo(activeFile) != 0)//f.equals(activeSearchFile))
+	            		if(f.getName().equals(activeFile.getName()) && 
+	            				isFileBinaryEqual(f, activeFile))
 						{
 							return true;
 						}
@@ -100,6 +108,84 @@ public class FileWalker {
 		
 	}
 	
+	/**
+    * Compare binary files. Both files must be files (not directories) and exist.
+    * 
+    * @param first  - first file
+    * @param second - second file
+    * @return boolean - true if files are binery equal
+    * @throws IOException - error in function
+    */
+   public boolean isFileBinaryEqual(
+      File first,
+      File second
+   ) throws IOException
+   {
+      // TODO: Test: Missing test
+      boolean retval = false;
+      
+      if ((first.exists()) && (second.exists()) 
+         && (first.isFile()) && (second.isFile()))
+      {
+         if (first.getCanonicalPath().equals(second.getCanonicalPath()))
+         {
+            retval = true;
+         }
+         else
+         {
+            FileInputStream firstInput = null;
+            FileInputStream secondInput = null;
+            BufferedInputStream bufFirstInput = null;
+            BufferedInputStream bufSecondInput = null;
+
+            try
+            {            
+               firstInput = new FileInputStream(first); 
+               secondInput = new FileInputStream(second);
+               bufFirstInput = new BufferedInputStream(firstInput, BLOCK_SIZE); 
+               bufSecondInput = new BufferedInputStream(secondInput, BLOCK_SIZE);
+   
+               int firstByte;
+               int secondByte;
+               
+               while (true)
+               {
+                  firstByte = bufFirstInput.read();
+                  secondByte = bufSecondInput.read();
+                  if (firstByte != secondByte)
+                  {
+                     break;
+                  }
+                  if ((firstByte < 0) && (secondByte < 0))
+                  {
+                     retval = true;
+                     break;
+                  }
+               }
+            }
+            finally
+            {
+               try
+               {
+                  if (bufFirstInput != null)
+                  {
+                     bufFirstInput.close();
+                  }
+               }
+               finally
+               {
+                  if (bufSecondInput != null)
+                  {
+                     bufSecondInput.close();
+                  }
+               }
+            }
+         }
+      }
+      
+      return retval;
+   	}
+
 	public static void main(String[] args) {
         FileWalker fw = new FileWalker();
         
