@@ -7,13 +7,12 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 
 /**
  * @author ott1982
  *
  */
-public class FileWalker {
+public class FileSearch {
 	
 	private String targetDir = "";
 	private String sourceDir = "";
@@ -185,29 +184,6 @@ public class FileWalker {
       
       return retval;
    	}
-
-	public static void main(String[] args) {
-        FileWalker fw = new FileWalker();
-        
-        String homeDir = System.getProperty("user.home");
-		String separator = System.getProperty("file.separator");
-		
-		String dir1 = homeDir + separator + "Desktop" + separator + "dir1";
-		String dir2 = homeDir + separator + "Desktop" + separator + "dir2";
-        
-        /*
-        String homeDir = System.getProperty("user.home");
-        String searchDir = homeDir + "/Desktop"; //"/Pictures/iPhoto Library/Originals";
-        // /Users/ott1982/Pictures/iPhoto Library/Originals
-        System.out.println(searchDir);
-        
-        File root = new File(searchDir);
-        
-        System.out.println(searchDir.isEmpty());
-        */
-        fw.searchDirectory(dir1, dir2);
-        System.out.println("Total missing files: " + fw.getMissingFileCount());
-    }
 
 	public int getMissingFileCount() {
 		return missingFileCount;
