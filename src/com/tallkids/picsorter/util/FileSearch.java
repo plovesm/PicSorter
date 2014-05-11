@@ -61,37 +61,42 @@ public class FileSearch {
     {
         System.out.println("Path to search: " + path);
     	
-    	File root = new File(path);
+    	File startingPoint = new File(path);
     	
-    	System.out.println("Is Directory? " + root.isDirectory());
-    	System.out.println("Exists?  " + root.exists());
-    	
-        File[] list = root.listFiles();
-         
-        if (getTargetDir() != null && 
-        		!getTargetDir().isEmpty() && 
-        		list != null)
-        {
-        	System.out.println("How many files: " + list.length);
-        	
-        	for (File f : list) {
-	            if (f.isDirectory()) {
-	                checkIfFilesAreBackedUp(f.getAbsolutePath());
-	                System.out.println("Checking Dir:" + f.getAbsoluteFile());
-	            }
-	            else {
-	            	System.out.println("Checking File: " + f.getName());
-	            	
-	            	boolean match = checkForFileMatch(f, getTargetDir());
-	            	
-	            	if(!match)
-	                {
-	                	setMissingFileCount(getMissingFileCount() + 1);
-	            		System.out.println(f.getAbsolutePath());
-	                }
-	            }
+    	if(startingPoint.exists())
+    	{
+	        File[] list = startingPoint.listFiles();
+	         
+	        if (getTargetDir() != null && 
+	        		!getTargetDir().isEmpty() && 
+	        		list != null)
+	        {
+	        	System.out.println("Is Directory? " + startingPoint.isDirectory());
+	        	System.out.println("How many files: " + list.length);
+	        	
+	        	for (File f : list) {
+		            if (f.isDirectory()) {
+		                checkIfFilesAreBackedUp(f.getAbsolutePath());
+		                System.out.println("Checking Dir:" + f.getAbsoluteFile());
+		            }
+		            else {
+		            	System.out.println("Checking File: " + f.getName());
+		            	
+		            	boolean match = checkForFileMatch(f, getTargetDir());
+		            	
+		            	if(!match)
+		                {
+		                	setMissingFileCount(getMissingFileCount() + 1);
+		            		System.out.println(f.getAbsolutePath());
+		                }
+		            }
+		        }
 	        }
-        }
+    	}
+    	else
+    	{
+    		System.out.println("Directory doesn't exist.");
+    	}
     }
     
 	public void searchDirectory(String searchDir, String targetDir)
