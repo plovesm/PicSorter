@@ -7,6 +7,8 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author ott1982
@@ -70,7 +72,6 @@ public class FileSearch {
 	        // Step 1: Get the total number of files in this directory tree
     		setTotalSourceFiles(getTotalSourceFiles(startingPoint));
     		
-    		
     		File[] list = startingPoint.listFiles();
 	         
 	        if (getTargetDir() != null && 
@@ -79,7 +80,8 @@ public class FileSearch {
 	        {
 	        	System.out.println("Is Directory? " + startingPoint.isDirectory());
 	        	System.out.println("How many files: " + list.length);
-	        	
+	        	System.out.println("Actual number of Files: " + getTotalSourceFiles());
+	    		
 	        	for (File f : list) {
 		            if (f.isDirectory()) {
 		                checkIfFilesAreBackedUp(f.getAbsolutePath());
@@ -237,8 +239,13 @@ public class FileSearch {
 	 */	
 	private int getTotalSourceFiles(File startingPoint) {
 		
+		int fileCount = 0;
 		
-		return 0;
+		// Iterate through the file list and count how many files are there
+		List<File> fileList = traverseDirectory(startingPoint, null);
+		fileCount = fileList.size();		
+		
+		return fileCount;
 	}
 	
 	/**
@@ -269,4 +276,24 @@ public class FileSearch {
 		this.currentSourceFile = currentSourceFile;
 	}
 
+	public List<File> traverseDirectory(File startingPoint, List<File> files)
+	{
+		
+		File[] startingList = startingPoint.listFiles();
+		List<File> fileList = (files != null) ? files : new ArrayList<File>() ;
+		
+		for (File f : startingList) {
+            if (f.isDirectory()) {
+            	traverseDirectory(f, fileList);
+                System.out.println("Checking Dir:" + f.getAbsoluteFile());
+            }
+            else {
+            	System.out.println("Adding File: " + f.getName());
+            	
+            	fileList.add(f);
+            }
+        }
+		
+		return fileList;
+	}
 }
