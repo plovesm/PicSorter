@@ -14,9 +14,11 @@ import java.io.IOException;
  */
 public class FileSearch {
 	
-	private String targetDir = "";
-	private String sourceDir = "";
-	private int missingFileCount = 0;
+	private String 			targetDir = "";
+	private String 			sourceDir = "";
+	private int 			totalSourceFiles = 0;
+	private int				currentSourceFile = 0;
+	private int 			missingFileCount = 0;
     
 	private final static int BLOCK_SIZE = 65536;
 		
@@ -65,7 +67,11 @@ public class FileSearch {
     	
     	if(startingPoint.exists())
     	{
-	        File[] list = startingPoint.listFiles();
+	        // Step 1: Get the total number of files in this directory tree
+    		setTotalSourceFiles(getTotalSourceFiles(startingPoint));
+    		
+    		
+    		File[] list = startingPoint.listFiles();
 	         
 	        if (getTargetDir() != null && 
 	        		!getTargetDir().isEmpty() && 
@@ -120,10 +126,7 @@ public class FileSearch {
     * @return boolean - true if files are binery equal
     * @throws IOException - error in function
     */
-   public boolean isFileBinaryEqual(
-      File first,
-      File second
-   ) throws IOException
+   public boolean isFileBinaryEqual(File first, File second) throws IOException
    {
       // TODO: Test: Missing test
       boolean retval = false;
@@ -224,6 +227,46 @@ public class FileSearch {
 	 */
 	public void setSourceDir(String sourcehDir) {
 		this.sourceDir = sourcehDir;
+	}
+
+	/**
+	 * Traverses the source tree to find all files that will need to be checked.
+	 * 
+	 * @param File startingPoint
+	 * @return the totalSourceFiles
+	 */	
+	private int getTotalSourceFiles(File startingPoint) {
+		
+		
+		return 0;
+	}
+	
+	/**
+	 * @return the totalSourceFiles
+	 */
+	public int getTotalSourceFiles() {
+		return totalSourceFiles;
+	}
+
+	/**
+	 * @param totalSourceFiles the totalSourceFiles to set
+	 */
+	public void setTotalSourceFiles(int totalSourceFiles) {
+		this.totalSourceFiles = totalSourceFiles;
+	}
+
+	/**
+	 * @return the currentSourceFile
+	 */
+	public int getCurrentSourceFile() {
+		return currentSourceFile;
+	}
+
+	/**
+	 * @param currentSourceFile the currentSourceFile to set
+	 */
+	public void setCurrentSourceFile(int currentSourceFile) {
+		this.currentSourceFile = currentSourceFile;
 	}
 
 }

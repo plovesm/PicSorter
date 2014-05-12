@@ -110,6 +110,10 @@ public class DirectorySelectionFrame extends JFrame
 			}
 		});
 	    
+	    // Step 2b: Build Status label for searchable files
+	    
+	    
+	    
 		
 		// Step 3: Build button panel - Cancel, Search
 		buttonPanel = new JPanel(gridBag);
