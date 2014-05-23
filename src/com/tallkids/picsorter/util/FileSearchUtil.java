@@ -114,6 +114,8 @@ public class FileSearchUtil {
 				searchModel.getSourceFileList() != null &&
 				searchModel.getTargetFileList() != null)
 		{
+			// Restart the count as zero
+			searchModel.setTotalMissingFiles(0);
 			
 			for(File file : searchModel.getSourceFileList())
 			{
@@ -137,6 +139,7 @@ public class FileSearchUtil {
 				
 				if(!match)
 				{
+					System.out.println("Missing File: " + file.getName());
 					searchModel.setTotalMissingFiles(searchModel.getTotalMissingFiles() +1);
 				}
 			}

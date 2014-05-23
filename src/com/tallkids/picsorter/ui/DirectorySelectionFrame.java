@@ -17,6 +17,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.tallkids.picsorter.constants.StyleConstants;
 import com.tallkids.picsorter.model.SearchModel;
 import com.tallkids.picsorter.util.FileSearchUtil;
 
@@ -61,8 +62,14 @@ public class DirectorySelectionFrame extends JFrame
 		sourceChooser.setCurrentDirectory(new java.io.File("."));
 		sourceChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 	    
-		JLabel lblSourceSelection = new JLabel("Choose the source directory: ");
-		
+		 // Row label
+	    JLabel lblSourceSelection = new JLabel("Choose the source directory: ");
+	    lblSourceSelection.setFont(StyleConstants.SMALL_LABEL_FONT);
+	    
+	    // Label to display the selected target directory
+	    final JLabel lblSourceOutput = new JLabel("");
+	    
+	    // Button to launch the file dialog
 	    JButton btnOpenSourceLocation = new JButton("Open Source Location");
 	    btnOpenSourceLocation.addActionListener(new ActionListener()
 		{
@@ -75,6 +82,8 @@ public class DirectorySelectionFrame extends JFrame
 			    	   String sourceDir = sourceChooser.getSelectedFile().getCanonicalPath();
 			    	   
 			    	   System.out.println("Your source folder is: " + sourceDir);
+			    	   
+			    	   lblSourceOutput.setText(sourceDir);
 			    	   
 			    	   searchModel.setSourceFile(sourceChooser.getSelectedFile());
 			       }
@@ -90,8 +99,14 @@ public class DirectorySelectionFrame extends JFrame
 	    targetChooser.setCurrentDirectory(new java.io.File("."));
 	    targetChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 	    
-	    JLabel lblTargetSelection = new JLabel("Choose the source directory: ");
-		
+	    // Row label
+	    JLabel lblTargetSelection = new JLabel("Choose the target directory: ");
+	    lblTargetSelection.setFont(StyleConstants.SMALL_LABEL_FONT);
+	    
+	    // Label to display the selected target directory
+	    final JLabel lblTargetOutput = new JLabel("");
+	    
+	    // Button to launch the file dialog
 	    JButton btnOpenTargetLocation = new JButton("Open Target Location");
 	    btnOpenTargetLocation.addActionListener(new ActionListener()
 		{
@@ -104,6 +119,8 @@ public class DirectorySelectionFrame extends JFrame
 			    	   String targetDir = targetChooser.getSelectedFile().getCanonicalPath();
 			    	   
 			    	   System.out.println("Your target folder is: " + targetDir);
+			    	   
+			    	   lblTargetOutput.setText(targetDir);
 			    	   
 			    	   searchModel.setTargetFile(targetChooser.getSelectedFile());
 			       } 
@@ -152,16 +169,25 @@ public class DirectorySelectionFrame extends JFrame
 		
 		// Step 4: Add all the components
 		
+		// First row
 		cons.gridx = 0;
 		cons.gridy = 0;
 		mainPanel.add(lblSourceSelection, cons);
 		cons.gridx = 1;
 		cons.gridy = 0;
+		mainPanel.add(lblSourceOutput, cons);
+		cons.gridx = 2;
+		cons.gridy = 0;
 	    mainPanel.add(btnOpenSourceLocation, cons);
+	    
+	    // Second row
 	    cons.gridx = 0;
 		cons.gridy = 1;
 		mainPanel.add(lblTargetSelection, cons);
 		cons.gridx = 1;
+		cons.gridy = 1;
+		mainPanel.add(lblTargetOutput, cons);
+		cons.gridx = 2;
 		cons.gridy = 1;
 	    mainPanel.add(btnOpenTargetLocation, cons);	    
 		mainFrame.getContentPane().add(mainPanel, BorderLayout.NORTH);
