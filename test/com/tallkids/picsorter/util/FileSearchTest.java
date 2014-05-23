@@ -22,7 +22,7 @@ public class FileSearchTest {
 	}
 
 	/**
-	 * Test method for {@link com.tallkids.picsorter.util.FileSearch#searchDirectory(java.lang.String, java.lang.String)}.
+	 * Test method for {@link com.tallkids.picsorter.util.FileSearchUtil#searchDirectory(java.lang.String, java.lang.String)}.
 	 */
 	@Test
 	public void testSearchDirectory() {
@@ -30,7 +30,7 @@ public class FileSearchTest {
 	}
 
 	/**
-	 * Test method for {@link com.tallkids.picsorter.util.FileSearch#isFileBinaryEqual(java.io.File, java.io.File)}.
+	 * Test method for {@link com.tallkids.picsorter.util.FileSearchUtil#isFileBinaryEqual(java.io.File, java.io.File)}.
 	 */
 	@Test
 	public void testIsFileBinaryEqual() {
@@ -38,7 +38,7 @@ public class FileSearchTest {
 	}
 
 	/**
-	 * Test method for {@link com.tallkids.picsorter.util.FileSearch#getMissingFileCount()}.
+	 * Test method for {@link com.tallkids.picsorter.util.FileSearchUtil#getMissingFileCount()}.
 	 */
 	@Test
 	public void testGetMissingFileCount() {
@@ -46,7 +46,7 @@ public class FileSearchTest {
 	}
 
 	/**
-	 * Test method for {@link com.tallkids.picsorter.util.FileSearch#setMissingFileCount(int)}.
+	 * Test method for {@link com.tallkids.picsorter.util.FileSearchUtil#setMissingFileCount(int)}.
 	 */
 	@Test
 	public void testSetMissingFileCount() {
@@ -54,7 +54,7 @@ public class FileSearchTest {
 	}
 
 	/**
-	 * Test method for {@link com.tallkids.picsorter.util.FileSearch#getTargetDir()}.
+	 * Test method for {@link com.tallkids.picsorter.util.FileSearchUtil#getTargetDir()}.
 	 */
 	@Test
 	public void testGetTargetDir() {
@@ -62,7 +62,7 @@ public class FileSearchTest {
 	}
 
 	/**
-	 * Test method for {@link com.tallkids.picsorter.util.FileSearch#setTargetDir(java.lang.String)}.
+	 * Test method for {@link com.tallkids.picsorter.util.FileSearchUtil#setTargetDir(java.lang.String)}.
 	 */
 	@Test
 	public void testSetTargetDir() {
@@ -70,7 +70,7 @@ public class FileSearchTest {
 	}
 
 	/**
-	 * Test method for {@link com.tallkids.picsorter.util.FileSearch#getSourceDir()}.
+	 * Test method for {@link com.tallkids.picsorter.util.FileSearchUtil#getSourceDir()}.
 	 */
 	@Test
 	public void testGetSourceDir() {
@@ -78,7 +78,7 @@ public class FileSearchTest {
 	}
 
 	/**
-	 * Test method for {@link com.tallkids.picsorter.util.FileSearch#setSourceDir(java.lang.String)}.
+	 * Test method for {@link com.tallkids.picsorter.util.FileSearchUtil#setSourceDir(java.lang.String)}.
 	 */
 	@Test
 	public void testSetSourceDir() {
@@ -86,7 +86,7 @@ public class FileSearchTest {
 	}
 
 	/**
-	 * Test method for {@link com.tallkids.picsorter.util.FileSearch#getTotalSourceFiles()}.
+	 * Test method for {@link com.tallkids.picsorter.util.FileSearchUtil#getTotalSourceFiles()}.
 	 */
 	@Test
 	public void testGetTotalSourceFiles() {
@@ -94,7 +94,7 @@ public class FileSearchTest {
 	}
 
 	/**
-	 * Test method for {@link com.tallkids.picsorter.util.FileSearch#setTotalSourceFiles(int)}.
+	 * Test method for {@link com.tallkids.picsorter.util.FileSearchUtil#setTotalSourceFiles(int)}.
 	 */
 	@Test
 	public void testSetTotalSourceFiles() {
@@ -102,7 +102,7 @@ public class FileSearchTest {
 	}
 
 	/**
-	 * Test method for {@link com.tallkids.picsorter.util.FileSearch#getCurrentSourceFile()}.
+	 * Test method for {@link com.tallkids.picsorter.util.FileSearchUtil#getCurrentSourceFile()}.
 	 */
 	@Test
 	public void testGetCurrentSourceFile() {
@@ -110,7 +110,7 @@ public class FileSearchTest {
 	}
 
 	/**
-	 * Test method for {@link com.tallkids.picsorter.util.FileSearch#setCurrentSourceFile(int)}.
+	 * Test method for {@link com.tallkids.picsorter.util.FileSearchUtil#setCurrentSourceFile(int)}.
 	 */
 	@Test
 	public void testSetCurrentSourceFile() {
@@ -118,7 +118,7 @@ public class FileSearchTest {
 	}
 
 	/**
-	 * Test method for {@link com.tallkids.picsorter.util.FileSearch#traverseDirectory(java.io.File)}.
+	 * Test method for {@link com.tallkids.picsorter.util.FileSearchUtil#traverseDirectory(java.io.File)}.
 	 */
 	@Test
 	public void testTraverseDirectory() {

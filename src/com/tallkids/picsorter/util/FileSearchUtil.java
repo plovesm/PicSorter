@@ -10,21 +10,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.tallkids.picsorter.model.SearchModel;
+
 /**
  * @author ott1982
  *
  */
-public class FileSearch {
+public class FileSearchUtil {
 	
-	private String 			targetDir = "";
-	private String 			sourceDir = "";
-	private int 			totalSourceFiles = 0;
-	private int				currentSourceFile = 0;
-	private int 			missingFileCount = 0;
-    
-	private final static int BLOCK_SIZE = 65536;
-		
-    private boolean checkForFileMatch(File activeFile, String path) {
+	private final static int BLOCK_SIZE = 65536; // Used for getting the binary comparison
+	
+	private static boolean checkForFileMatch(File activeFile, String path) {
 
         File root = new File(path);
         File[] list = root.listFiles();
@@ -56,67 +52,65 @@ public class FileSearch {
         return false;
     }
     
-    private void checkIfFilesAreBackedUp() 
+    private static void checkIfFilesAreBackedUp(SearchModel searchModel) 
     {
-    	checkIfFilesAreBackedUp(getSourceDir());
-    }
-    
-    private void checkIfFilesAreBackedUp(String path) 
-    {
-        System.out.println("Path to search: " + path);
-    	
-    	File startingPoint = new File(path);
-    	
-    	if(startingPoint.exists())
+        // First check searchModel and make sure source dir is available
+    	if(searchModel != null && searchModel.getSourceDir() != null)
     	{
-	        // Step 1: Get the total number of files in this directory tree
-    		setTotalSourceFiles(getTotalSourceFiles(startingPoint));
-    		
-    		File[] list = startingPoint.listFiles();
-	         
-	        if (getTargetDir() != null && 
-	        		!getTargetDir().isEmpty() && 
-	        		list != null)
-	        {
-	        	System.out.println("Is Directory? " + startingPoint.isDirectory());
-	        	System.out.println("How many files: " + list.length);
-	        	System.out.println("Actual number of Files: " + getTotalSourceFiles());
-	    		
-	        	for (File f : list) {
-		            if (f.isDirectory()) {
-		                checkIfFilesAreBackedUp(f.getAbsolutePath());
-		                System.out.println("Checking Dir:" + f.getAbsoluteFile());
-		            }
-		            else {
-		            	System.out.println("Checking File: " + f.getName());
-		            	
-		            	boolean match = checkForFileMatch(f, getTargetDir());
-		            	
-		            	if(!match)
-		                {
-		                	setMissingFileCount(getMissingFileCount() + 1);
-		            		System.out.println(f.getAbsolutePath());
-		                }
-		            }
+	    	// Establish the starting point
+	    	File startingPoint = (searchModel.getCurrentActiveFile() != null) ? 
+	    								searchModel.getCurrentActiveFile() : searchModel.getSourceFile();
+	    									
+	    	if(startingPoint.exists())
+	    	{
+	    		System.out.println("Path to search: " + startingPoint.getAbsolutePath());
+		        
+	    		File[] list = startingPoint.listFiles();
+		         
+		        if (searchModel.getTargetDir() != null && 
+		        		!searchModel.getTargetDir().isEmpty() && 
+		        		list != null)
+		        {
+		        	System.out.println("Is Directory? " + startingPoint.isDirectory());
+		        	System.out.println("How many files: " + list.length);
+		        	System.out.println("Actual number of Files: " + getTotalSourceFiles(startingPoint));
+		    		
+		        	for (File f : list) {
+			            
+		        		// Set the active file
+		        		searchModel.setCurrentActiveFile(f);
+		        		
+		        		if (f.isDirectory()) {
+			                checkIfFilesAreBackedUp(searchModel);
+			                System.out.println("Checking Dir:" + f.getAbsoluteFile());
+			            }
+			            else {
+			            	System.out.println("Checking File: " + f.getName());
+			            	
+			            	// Now iterate through the target directory
+			            	if(!checkForFileMatch(f, searchModel.getTargetDir()))
+			                {
+			                	searchModel.setTotalMissingFiles(searchModel.getTotalMissingFiles() +1);
+			            		System.out.println(f.getAbsolutePath());
+			                }
+			            }
+			        }
 		        }
-	        }
-    	}
-    	else
-    	{
-    		System.out.println("Directory doesn't exist.");
+	    	}
+	    	else
+	    	{
+	    		System.out.println("Directory doesn't exist.");
+	    	}
     	}
     }
     
-	public void searchDirectory(String searchDir, String targetDir)
+    public static void searchDirectory(SearchModel searchModel)
 	{
 		
-		setTargetDir(targetDir);
-		setSourceDir(searchDir);
+		System.out.println("Search Dir: " + searchModel.getSourceDir());
+		System.out.println("Target Dir: " + searchModel.getTargetDir());
 		
-		System.out.println("Search Dir: " + getSourceDir());
-		System.out.println("Target Dir: " + getTargetDir());
-		
-		checkIfFilesAreBackedUp();        
+		checkIfFilesAreBackedUp(searchModel);        
 		
 	}
 	
@@ -128,8 +122,8 @@ public class FileSearch {
     * @return boolean - true if files are binery equal
     * @throws IOException - error in function
     */
-   public boolean isFileBinaryEqual(File first, File second) throws IOException
-   {
+    public static boolean isFileBinaryEqual(File first, File second) throws IOException
+    {
       // TODO: Test: Missing test
       boolean retval = false;
       
@@ -195,88 +189,31 @@ public class FileSearch {
       return retval;
    	}
 
-	public int getMissingFileCount() {
-		return missingFileCount;
-	}
-
-	public void setMissingFileCount(int missingFileCount) {
-		this.missingFileCount = missingFileCount;
-	}
-	
-	/**
-	 * @return the targetDir
-	 */
-	public String getTargetDir() {
-		return targetDir;
-	}
-
-	/**
-	 * @param targetDir the targetDir to set
-	 */
-	public void setTargetDir(String targetDir) {
-		this.targetDir = targetDir;
-	}
-
-	/**
-	 * @return the searchDir
-	 */
-	public String getSourceDir() {
-		return sourceDir;
-	}
-
-	/**
-	 * @param searchDir the searchDir to set
-	 */
-	public void setSourceDir(String sourcehDir) {
-		this.sourceDir = sourcehDir;
-	}
-
 	/**
 	 * Traverses the source tree to find all files that will need to be checked.
 	 * 
 	 * @param File startingPoint
 	 * @return the totalSourceFiles
 	 */	
-	private int getTotalSourceFiles(File startingPoint) {
+	public static int getTotalSourceFiles(File startingPoint) {
 		
 		int fileCount = 0;
 		
 		// Iterate through the file list and count how many files are there
 		List<File> fileList = traverseDirectory(startingPoint, null);
 		fileCount = fileList.size();		
-		
+		System.out.println("File Count: " + fileCount);
 		return fileCount;
 	}
 	
 	/**
-	 * @return the totalSourceFiles
+	 * Traverse the directory to create a list of just the files
+	 * 
+	 * @param startingPoint
+	 * @param files - pre-seeded list to add to
+	 * @return fileList - list of just the files in the directory
 	 */
-	public int getTotalSourceFiles() {
-		return totalSourceFiles;
-	}
-
-	/**
-	 * @param totalSourceFiles the totalSourceFiles to set
-	 */
-	public void setTotalSourceFiles(int totalSourceFiles) {
-		this.totalSourceFiles = totalSourceFiles;
-	}
-
-	/**
-	 * @return the currentSourceFile
-	 */
-	public int getCurrentSourceFile() {
-		return currentSourceFile;
-	}
-
-	/**
-	 * @param currentSourceFile the currentSourceFile to set
-	 */
-	public void setCurrentSourceFile(int currentSourceFile) {
-		this.currentSourceFile = currentSourceFile;
-	}
-
-	public List<File> traverseDirectory(File startingPoint, List<File> files)
+	public static List<File> traverseDirectory(File startingPoint, List<File> files)
 	{
 		
 		File[] startingList = startingPoint.listFiles();
@@ -284,12 +221,11 @@ public class FileSearch {
 		
 		for (File f : startingList) {
             if (f.isDirectory()) {
+            	System.out.println("Traverse Checking Dir:" + f.getAbsoluteFile());
             	traverseDirectory(f, fileList);
-                System.out.println("Checking Dir:" + f.getAbsoluteFile());
             }
             else {
-            	System.out.println("Adding File: " + f.getName());
-            	
+            	System.out.println("Traverse Adding File: " + f.getName());
             	fileList.add(f);
             }
         }

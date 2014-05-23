@@ -18,7 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import com.tallkids.picsorter.model.SearchModel;
-import com.tallkids.picsorter.util.FileSearch;
+import com.tallkids.picsorter.util.FileSearchUtil;
 
 /**
  * @author ott1982
@@ -38,8 +38,7 @@ public class DirectorySelectionFrame extends JFrame
 	public void buildDirectorySelection() {
 		
 		// Step 0: Declare method level variables		
-		final FileSearch fs = new FileSearch();
-		
+
 		//create GribBagLayout and the GridBagLayout Constraints
         GridBagLayout gridBag = new GridBagLayout();
         GridBagConstraints cons = new GridBagConstraints();
@@ -71,16 +70,19 @@ public class DirectorySelectionFrame extends JFrame
 			public void actionPerformed(ActionEvent event) {
 				int returnVal = sourceChooser.showOpenDialog(mainPanel);
 			    if(returnVal == JFileChooser.APPROVE_OPTION) {
-			       try {
+			       try
+			       {
 			    	   String sourceDir = sourceChooser.getSelectedFile().getCanonicalPath();
 			    	   
-			    	   System.out.println("Your source folder is: " +
-			    			   sourceDir);
+			    	   System.out.println("Your source folder is: " + sourceDir);
 			    	   
-			    	   searchModel.setSourceDir(sourceDir);
-					} catch (IOException e) {
+			    	   searchModel.setSourceFile(sourceChooser.getSelectedFile());
+			    	   searchModel.setTotalSourceFiles(FileSearchUtil.getTotalSourceFiles(searchModel.getSourceFile()));
+			       }
+			       catch (IOException e)
+			       {
 						e.printStackTrace();
-					}
+			       }
 			    }
 			}
 		});
@@ -98,14 +100,18 @@ public class DirectorySelectionFrame extends JFrame
 			public void actionPerformed(ActionEvent event) {
 				int returnVal = targetChooser.showOpenDialog(mainPanel);
 			    if(returnVal == JFileChooser.APPROVE_OPTION) {
-			       try {
-			    	   System.out.println("Your target folder is: " +
-			    			   targetChooser.getSelectedFile().getCanonicalPath());
+			       try 
+			       {
+			    	   String targetDir = targetChooser.getSelectedFile().getCanonicalPath();
 			    	   
-			    	   searchModel.setTargetDir(targetChooser.getSelectedFile().getCanonicalPath());
-					} catch (IOException e) {
+			    	   System.out.println("Your target folder is: " + targetDir);
+			    	   
+			    	   searchModel.setTargetFile(targetChooser.getSelectedFile());
+			       } 
+			       catch (IOException e)
+			       {
 						e.printStackTrace();
-					}
+			       }
 			    }
 			}
 		});
@@ -137,8 +143,8 @@ public class DirectorySelectionFrame extends JFrame
 			public void actionPerformed(ActionEvent event) {
 				
 				// Close the frame
-				fs.searchDirectory(searchModel.getSourceDir(), searchModel.getTargetDir());
-				System.out.println("Total missing files: " + fs.getMissingFileCount());
+				FileSearchUtil.searchDirectory(searchModel);
+				System.out.println("Total missing files: " + searchModel.getTotalMissingFiles());
 
 			}
 		});
