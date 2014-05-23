@@ -77,7 +77,6 @@ public class DirectorySelectionFrame extends JFrame
 			    	   System.out.println("Your source folder is: " + sourceDir);
 			    	   
 			    	   searchModel.setSourceFile(sourceChooser.getSelectedFile());
-			    	   searchModel.setTotalSourceFiles(FileSearchUtil.getTotalSourceFiles(searchModel.getSourceFile()));
 			       }
 			       catch (IOException e)
 			       {
@@ -142,7 +141,8 @@ public class DirectorySelectionFrame extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				
-				// Close the frame
+				// Populate the lists and then do the search
+				FileSearchUtil.populateSourceAndTargetLists(searchModel);
 				FileSearchUtil.searchDirectory(searchModel);
 				System.out.println("Total missing files: " + searchModel.getTotalMissingFiles());
 

@@ -73,7 +73,7 @@ public class FileSearchUtil {
 		        {
 		        	System.out.println("Is Directory? " + startingPoint.isDirectory());
 		        	System.out.println("How many files: " + list.length);
-		        	System.out.println("Actual number of Files: " + getTotalSourceFiles(startingPoint));
+		        	System.out.println("Actual number of Files: " + searchModel.getTotalSourceFiles());
 		    		
 		        	for (File f : list) {
 			            
@@ -110,7 +110,39 @@ public class FileSearchUtil {
 		System.out.println("Search Dir: " + searchModel.getSourceDir());
 		System.out.println("Target Dir: " + searchModel.getTargetDir());
 		
-		checkIfFilesAreBackedUp(searchModel);        
+		if(searchModel != null &&
+				searchModel.getSourceFileList() != null &&
+				searchModel.getTargetFileList() != null)
+		{
+			
+			for(File file : searchModel.getSourceFileList())
+			{
+				boolean match = false;
+				
+				for(File targetFile : searchModel.getTargetFileList())
+				{
+					try 
+					{
+						if(isFileBinaryEqual(file, targetFile))
+						{
+							match = true;
+							break;
+						}
+					} 
+					catch (IOException e) 
+					{
+						e.printStackTrace();
+					}
+				}
+				
+				if(!match)
+				{
+					searchModel.setTotalMissingFiles(searchModel.getTotalMissingFiles() +1);
+				}
+			}
+		}
+		
+		//checkIfFilesAreBackedUp(searchModel);        
 		
 	}
 	
@@ -195,15 +227,19 @@ public class FileSearchUtil {
 	 * @param File startingPoint
 	 * @return the totalSourceFiles
 	 */	
-	public static int getTotalSourceFiles(File startingPoint) {
+	public static void populateSourceAndTargetLists(SearchModel searchModel) {
 		
-		int fileCount = 0;
-		
-		// Iterate through the file list and count how many files are there
-		List<File> fileList = traverseDirectory(startingPoint, null);
-		fileCount = fileList.size();		
-		System.out.println("File Count: " + fileCount);
-		return fileCount;
+		if(searchModel != null)
+		{
+			// Iterate through the file list and count how many files are there
+			searchModel.setSourceFileList(traverseDirectory(searchModel.getSourceFile(), null));
+			searchModel.setTargetFileList(traverseDirectory(searchModel.getTargetFile(), null));
+			
+			
+			
+			System.out.println("Source File Count: " + searchModel.getTotalSourceFiles());
+			System.out.println("Target File Count: " + searchModel.getTargetFileList().size());
+		}
 	}
 	
 	/**

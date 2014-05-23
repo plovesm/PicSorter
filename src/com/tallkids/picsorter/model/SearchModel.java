@@ -5,6 +5,7 @@ package com.tallkids.picsorter.model;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author ott1982
@@ -15,8 +16,9 @@ public class SearchModel
 	
 	File		sourceFile;
 	File		targetFile;
+	List<File>	sourceFileList;
+	List<File>	targetFileList;
 	File		currentActiveFile;
-	int			totalSourceFiles;
 	int			currentFileIndex;
 	int			totalMissingFiles;
 	
@@ -44,6 +46,30 @@ public class SearchModel
 	 */
 	public void setTargetFile(File targetFile) {
 		this.targetFile = targetFile;
+	}
+	/**
+	 * @return the sourceFileList
+	 */
+	public List<File> getSourceFileList() {
+		return sourceFileList;
+	}
+	/**
+	 * @param sourceFileList the sourceFileList to set
+	 */
+	public void setSourceFileList(List<File> sourceFileList) {
+		this.sourceFileList = sourceFileList;
+	}
+	/**
+	 * @return the targetFileList
+	 */
+	public List<File> getTargetFileList() {
+		return targetFileList;
+	}
+	/**
+	 * @param targetFileList the targetFileList to set
+	 */
+	public void setTargetFileList(List<File> targetFileList) {
+		this.targetFileList = targetFileList;
 	}
 	/**
 	 * @return the currentActiveFile
@@ -98,11 +124,9 @@ public class SearchModel
 	}
 		
 	public int getTotalSourceFiles() {
-		return totalSourceFiles;
+		return (getSourceFileList() != null && !getSourceFileList().isEmpty()) ? getSourceFileList().size() : 0;
 	}
-	public void setTotalSourceFiles(int totalSourceFiles) {
-		this.totalSourceFiles = totalSourceFiles;
-	}
+
 	/**
 	 * @return the currentFileIndex
 	 */
