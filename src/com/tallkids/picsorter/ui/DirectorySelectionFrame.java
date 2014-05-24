@@ -17,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
+import com.tallkids.picsorter.constants.AppConfigConstants;
 import com.tallkids.picsorter.constants.StyleConstants;
 import com.tallkids.picsorter.model.SearchModel;
 import com.tallkids.picsorter.util.FileSearchUtil;
@@ -64,9 +65,28 @@ public class DirectorySelectionFrame extends JFrame
 		/** Step 2a: Build Status bar for searchable files
 	     * 
 	     */
-		final JProgressBar progressBar = new JProgressBar();
+		final JProgressBar progressBar = new JProgressBar()
+		{
+			private static final long serialVersionUID = 1L;
+
+			/* (non-Javadoc)
+			 * @see java.awt.Component#isVisible()
+			 */
+			@Override
+			public boolean isVisible() 
+			{
+				System.err.println("Total source files: " + searchModel.getTotalSourceFiles());
+				
+				// only show if 
+				return (searchModel.getTotalSourceFiles() > 0);
+			}
+			
+			
+			
+		};
 		progressBar.setMinimum(0);
 		progressBar.setStringPainted(true);
+		
 		
 		/** Step 2b: Build file chooser for source and target directory
 		 * 
@@ -139,7 +159,9 @@ public class DirectorySelectionFrame extends JFrame
 		});
 	    
 		
-		// Step 3: Build button panel - Cancel, Search
+		/** Step 3: Build button panel - Cancel, Search
+		 * 
+		 */
 		buttonPanel = new JPanel(gridBag);
 		
 		JButton btnClose = new JButton("Cancel");
@@ -154,7 +176,7 @@ public class DirectorySelectionFrame extends JFrame
 			}
 		});
 		
-		JButton btnSearch = new JButton("Search");
+		JButton btnSearch = new JButton("Quick Search");
 		btnSearch.addActionListener(new ActionListener()
 		{
 			@Override
@@ -164,6 +186,11 @@ public class DirectorySelectionFrame extends JFrame
 				FileSearchUtil.populateSourceAndTargetLists(searchModel);
 				// Set the max on the progress bar
 		    	progressBar.setMaximum(searchModel.getTotalSourceFiles());
+		    	
+		    	System.err.println("Qsearch: " + searchModel.getTotalSourceFiles());
+		    	
+		    	mainFrame.pack();
+		    	
 				// Search the target directory for backups
 		    	FileSearchUtil.searchDirectory(searchModel, progressBar);
 				System.out.println("Total missing files: " + searchModel.getTotalMissingFiles());
@@ -171,8 +198,30 @@ public class DirectorySelectionFrame extends JFrame
 			}
 		});
 		
+		JButton btnBinarySearch = new JButton("Binary Search (Slower)");
+		btnBinarySearch.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				
+				// Populate the lists and then do the search
+				FileSearchUtil.populateSourceAndTargetLists(searchModel);
+				// Set the max on the progress bar
+		    	progressBar.setMaximum(searchModel.getTotalSourceFiles());
+		    	System.err.println("Bsearch: " + searchModel.getTotalSourceFiles());
+		    	
+		    	mainFrame.pack();
+		    	
+				// Search the target directory for backups
+		    	FileSearchUtil.searchDirectory(searchModel, progressBar, AppConfigConstants.BINARY_SEARCH);
+				System.out.println("Total missing files: " + searchModel.getTotalMissingFiles());
+
+			}
+		});
 		
-		// Step 4: Add all the components
+		/** Step 4: Add all the components
+		 * 
+		 */
 		
 		// First row
 		cons.gridx = 0;
@@ -194,18 +243,25 @@ public class DirectorySelectionFrame extends JFrame
 		mainPanel.add(lblTargetOutput, cons);
 		cons.gridx = 2;
 		cons.gridy = 1;
-	    mainPanel.add(btnOpenTargetLocation, cons);	    
+	    mainPanel.add(btnOpenTargetLocation, cons);
+	    
+	    // Third row
+	    cons.gridx = 0;
+		cons.gridy = 2;
+		mainPanel.add(progressBar, cons);
 		mainFrame.getContentPane().add(mainPanel, BorderLayout.NORTH);
 		
+		// Bottom button panel
+		cons.insets = new Insets(1, 2, 8, 2);
 		cons.gridx = 0;
 		cons.gridy = 0;
-		buttonPanel.add(btnClose, cons);
-		cons.gridx = 1;
-		cons.gridy = 0;
 		buttonPanel.add(btnSearch, cons);
-		cons.gridx = 2;
-		cons.gridy = 0;
-		buttonPanel.add(progressBar, cons);
+		cons.gridx = 0;
+		cons.gridy = 1;
+		buttonPanel.add(btnBinarySearch, cons);
+		cons.gridx = 0;
+		cons.gridy = 2;
+		buttonPanel.add(btnClose, cons);
 		mainFrame.getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 		
 		// Step 5: Show the Frame
