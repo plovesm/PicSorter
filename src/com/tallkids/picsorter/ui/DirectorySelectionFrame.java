@@ -9,13 +9,13 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 
 import com.tallkids.picsorter.constants.StyleConstants;
 import com.tallkids.picsorter.model.SearchModel;
@@ -38,15 +38,17 @@ public class DirectorySelectionFrame extends JFrame
 	
 	public void buildDirectorySelection() {
 		
-		// Step 0: Declare method level variables		
-
+		/** Step 0: Declare method level variables
+		 * 	
+		 */
 		//create GribBagLayout and the GridBagLayout Constraints
         GridBagLayout gridBag = new GridBagLayout();
         GridBagConstraints cons = new GridBagConstraints();
         
-		// Step 1: Build overall frame
+        /** Step 1: Build overall frame
+         * 
+         */
         mainFrame = new JFrame("Backup Sorter");
-        mainFrame.setSize(500, 300);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setLocation(100, 50);
 		 
@@ -54,10 +56,21 @@ public class DirectorySelectionFrame extends JFrame
 		cons.anchor = GridBagConstraints.NORTHWEST;
         cons.insets = new Insets(10, 10, 10, 10);
 		
-		// Step 2: Build main panel
+        /** Step 2: Build main panel
+         * 
+         */
 		mainPanel = new JPanel(gridBag);
 		
-		// Step 2a: Build file chooser for source and target directory
+		/** Step 2a: Build Status bar for searchable files
+	     * 
+	     */
+		final JProgressBar progressBar = new JProgressBar();
+		progressBar.setMinimum(0);
+		progressBar.setStringPainted(true);
+		
+		/** Step 2b: Build file chooser for source and target directory
+		 * 
+		 */
 		sourceChooser = new JFileChooser();
 		sourceChooser.setCurrentDirectory(new java.io.File("."));
 		sourceChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -77,20 +90,17 @@ public class DirectorySelectionFrame extends JFrame
 			public void actionPerformed(ActionEvent event) {
 				int returnVal = sourceChooser.showOpenDialog(mainPanel);
 			    if(returnVal == JFileChooser.APPROVE_OPTION) {
-			       try
-			       {
-			    	   String sourceDir = sourceChooser.getSelectedFile().getCanonicalPath();
+
+			    	String sourceDir = sourceChooser.getSelectedFile().getAbsolutePath();
 			    	   
-			    	   System.out.println("Your source folder is: " + sourceDir);
+			    	System.out.println("Your source folder is: " + sourceDir);
 			    	   
-			    	   lblSourceOutput.setText(sourceDir);
+			    	lblSourceOutput.setText(sourceDir);
 			    	   
-			    	   searchModel.setSourceFile(sourceChooser.getSelectedFile());
-			       }
-			       catch (IOException e)
-			       {
-						e.printStackTrace();
-			       }
+			    	// Set the source file
+			    	searchModel.setSourceFile(sourceChooser.getSelectedFile());
+			    	   
+			    	mainFrame.pack();
 			    }
 			}
 		});
@@ -114,27 +124,19 @@ public class DirectorySelectionFrame extends JFrame
 			public void actionPerformed(ActionEvent event) {
 				int returnVal = targetChooser.showOpenDialog(mainPanel);
 			    if(returnVal == JFileChooser.APPROVE_OPTION) {
-			       try 
-			       {
-			    	   String targetDir = targetChooser.getSelectedFile().getCanonicalPath();
 			    	   
-			    	   System.out.println("Your target folder is: " + targetDir);
+			    	String targetDir = targetChooser.getSelectedFile().getAbsolutePath();
 			    	   
-			    	   lblTargetOutput.setText(targetDir);
+			    	System.out.println("Your target folder is: " + targetDir);
 			    	   
-			    	   searchModel.setTargetFile(targetChooser.getSelectedFile());
-			       } 
-			       catch (IOException e)
-			       {
-						e.printStackTrace();
-			       }
+			    	lblTargetOutput.setText(targetDir);
+			    	   
+			    	searchModel.setTargetFile(targetChooser.getSelectedFile());
+			    	   
+			    	mainFrame.pack();
 			    }
 			}
 		});
-	    
-	    // Step 2b: Build Status label for searchable files
-	    
-	    
 	    
 		
 		// Step 3: Build button panel - Cancel, Search
@@ -160,7 +162,10 @@ public class DirectorySelectionFrame extends JFrame
 				
 				// Populate the lists and then do the search
 				FileSearchUtil.populateSourceAndTargetLists(searchModel);
-				FileSearchUtil.searchDirectory(searchModel);
+				// Set the max on the progress bar
+		    	progressBar.setMaximum(searchModel.getTotalSourceFiles());
+				// Search the target directory for backups
+		    	FileSearchUtil.searchDirectory(searchModel, progressBar);
 				System.out.println("Total missing files: " + searchModel.getTotalMissingFiles());
 
 			}
@@ -198,9 +203,13 @@ public class DirectorySelectionFrame extends JFrame
 		cons.gridx = 1;
 		cons.gridy = 0;
 		buttonPanel.add(btnSearch, cons);
+		cons.gridx = 2;
+		cons.gridy = 0;
+		buttonPanel.add(progressBar, cons);
 		mainFrame.getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 		
 		// Step 5: Show the Frame
+		mainFrame.pack();
 		mainFrame.setVisible(true);
 		
 
