@@ -9,6 +9,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -16,6 +17,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.SwingWorker;
 
 import com.tallkids.picsorter.constants.AppConfigConstants;
 import com.tallkids.picsorter.constants.StyleConstants;
@@ -75,10 +79,8 @@ public class DirectorySelectionFrame extends JFrame
 			@Override
 			public boolean isVisible() 
 			{
-				System.err.println("Total source files: " + searchModel.getTotalSourceFiles());
-				
 				// only show if 
-				return (searchModel.getTotalSourceFiles() > 0);
+				return true; //(searchModel.getTotalSourceFiles() > 0);
 			}
 			
 			
@@ -86,7 +88,7 @@ public class DirectorySelectionFrame extends JFrame
 		};
 		progressBar.setMinimum(0);
 		progressBar.setStringPainted(true);
-		
+		searchModel.setProgressBar(progressBar);
 		
 		/** Step 2b: Build file chooser for source and target directory
 		 * 
@@ -158,8 +160,16 @@ public class DirectorySelectionFrame extends JFrame
 			}
 		});
 	    
+	    
+	    /** Step 3: Build output panel
+	     * 
+	     */
+	    JTextArea outputArea = new JTextArea(5, 20);
+	    JScrollPane outputScrollPane = new JScrollPane(outputArea); 
+	    outputArea.setEditable(false);
+	    
 		
-		/** Step 3: Build button panel - Cancel, Search
+		/** Step 4: Build button panel - Cancel, Search
 		 * 
 		 */
 		buttonPanel = new JPanel(gridBag);
@@ -185,14 +195,17 @@ public class DirectorySelectionFrame extends JFrame
 				// Populate the lists and then do the search
 				FileSearchUtil.populateSourceAndTargetLists(searchModel);
 				// Set the max on the progress bar
-		    	progressBar.setMaximum(searchModel.getTotalSourceFiles());
-		    	
+		    	searchModel.getProgressBar().setMaximum(searchModel.getTotalSourceFiles());
+		    	// Reset the counter
 		    	System.err.println("Qsearch: " + searchModel.getTotalSourceFiles());
+		    	
+		    	Sleeper task = new Sleeper();
+                task.execute();		    	
 		    	
 		    	mainFrame.pack();
 		    	
 				// Search the target directory for backups
-		    	FileSearchUtil.searchDirectory(searchModel, progressBar);
+		    	FileSearchUtil.searchDirectory(searchModel);
 				System.out.println("Total missing files: " + searchModel.getTotalMissingFiles());
 
 			}
@@ -207,19 +220,19 @@ public class DirectorySelectionFrame extends JFrame
 				// Populate the lists and then do the search
 				FileSearchUtil.populateSourceAndTargetLists(searchModel);
 				// Set the max on the progress bar
-		    	progressBar.setMaximum(searchModel.getTotalSourceFiles());
+				searchModel.getProgressBar().setMaximum(searchModel.getTotalSourceFiles());
 		    	System.err.println("Bsearch: " + searchModel.getTotalSourceFiles());
 		    	
 		    	mainFrame.pack();
 		    	
 				// Search the target directory for backups
-		    	FileSearchUtil.searchDirectory(searchModel, progressBar, AppConfigConstants.BINARY_SEARCH);
+		    	FileSearchUtil.searchDirectory(searchModel, AppConfigConstants.BINARY_SEARCH);
 				System.out.println("Total missing files: " + searchModel.getTotalMissingFiles());
 
 			}
 		});
 		
-		/** Step 4: Add all the components
+		/** Step 5: Add all the components
 		 * 
 		 */
 		
@@ -248,8 +261,11 @@ public class DirectorySelectionFrame extends JFrame
 	    // Third row
 	    cons.gridx = 0;
 		cons.gridy = 2;
-		mainPanel.add(progressBar, cons);
+		mainPanel.add(searchModel.getProgressBar(), cons);
 		mainFrame.getContentPane().add(mainPanel, BorderLayout.NORTH);
+		
+		// Output Area
+		mainFrame.getContentPane().add(outputScrollPane, BorderLayout.CENTER);
 		
 		// Bottom button panel
 		cons.insets = new Insets(1, 2, 8, 2);
@@ -270,5 +286,58 @@ public class DirectorySelectionFrame extends JFrame
 		
 
 	}
+	
+	//SwingWorker class is used to simulate a task being performed
+	class Sleeper extends SwingWorker 
+	{
 
+        @Override
+        public Void doInBackground() throws InterruptedException {
+               
+            try
+            {     
+            	System.err.println("Max: " + searchModel.getProgressBar().getMaximum());
+            	int progress = 0;
+            	while (progress < 100) //searchModel.getCurrentFileIndex() < searchModel.getProgressBar().getMaximum())
+            	{	
+                    //pause thread and then update the progress
+                    Thread.sleep(50);
+                    System.err.println("Max: " + searchModel.getProgressBar().getMaximum());
+                    System.err.println("Current Index: " + searchModel.getCurrentFileIndex());
+                    
+                    progress+=5;
+                    
+                    //Call the process method to update the GUI
+                    publish(progress); //searchModel.getCurrentFileIndex());
+
+                }
+            	
+            	//publish(searchModel.getProgressBar().getMaximum());
+            }
+            catch(InterruptedException e)
+            {
+            }
+            return null;
+        }
+
+		/* (non-Javadoc)
+		 * @see javax.swing.SwingWorker#process(java.util.List)
+		 */
+		@Override
+		protected void process(List chunks) {
+			for (Object chunk : chunks) {
+				Integer val = (Integer)chunk;
+	        	 
+				searchModel.getProgressBar().setValue(val);
+				
+				System.err.println("Current Value: " + searchModel.getProgressBar().getValue());
+				System.err.println("Progress: " + searchModel.getProgressBar().getPercentComplete());
+			}
+						
+		}
+        
+        
+        	        
+     }
+	
 }

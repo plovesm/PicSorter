@@ -10,7 +10,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 
 import com.tallkids.picsorter.constants.AppConfigConstants;
 import com.tallkids.picsorter.model.SearchModel;
@@ -30,29 +31,7 @@ public class FileSearchUtil {
 	 */
     public static void searchDirectory(SearchModel searchModel)
 	{
-    	searchDirectory(searchModel, null, null);
-	}
-    
-    /**
-     * Search a directory to see what files are not backed up
-     * 
-     * @param searchModel
-     * @param progressBar
-     */
-    public static void searchDirectory(SearchModel searchModel, JProgressBar progressBar)
-	{
-    	searchDirectory(searchModel, progressBar, null);
-	}
-    
-    /**
-     * Search a directory to see what files are not backed up
-     * 
-     * @param searchModel
-     * @param searchMode
-     */
-    public static void searchDirectory(SearchModel searchModel, String searchMode)
-	{
-    	searchDirectory(searchModel, null, searchMode);
+    	searchDirectory(searchModel, null);
 	}
     
     /**
@@ -62,7 +41,7 @@ public class FileSearchUtil {
      * @param progressBar
      * @param searchMode
      */
-    public static void searchDirectory(SearchModel searchModel, JProgressBar progressBar, String searchMode)
+    public static void searchDirectory(final SearchModel searchModel, String searchMode)
 	{
 		
 		System.out.println("Search Dir: " + searchModel.getSourceDir());
@@ -70,29 +49,26 @@ public class FileSearchUtil {
 		
 		// Default to quick search if null is passed in
 		searchMode = (searchMode == null) ? AppConfigConstants.QUICK_SEARCH : searchMode;
-		progressBar = (progressBar == null) ? new JProgressBar() : progressBar;
 		
 		// Search through the lists for matches
-		if(searchModel != null && searchModel.getSourceFileList() != null && searchModel.getTargetFileList() != null)
+		if(searchModel != null && 
+				searchModel.getSourceFileList() != null && 
+				searchModel.getTargetFileList() != null)
 		{
 			// Restart the count as zero
 			searchModel.setTotalMissingFiles(0);
 			searchModel.setCurrentFileIndex(0);
 			
-			System.out.println("Progress Bar Max: " + progressBar.getMaximum());
-			
+						
 			for(File file : searchModel.getSourceFileList())
 			{
 				boolean match = false;
 				
 				// Increment the current file index
 				searchModel.setCurrentFileIndex(searchModel.getCurrentFileIndex() +1);
-				progressBar.setValue(searchModel.getCurrentFileIndex());
-				progressBar.firePropertyChange("value", searchModel.getCurrentFileIndex()-1, searchModel.getCurrentFileIndex());
 				
-				System.out.println("Progress Bar Value: " + progressBar.getValue());
-				System.out.println("Current Index: " + searchModel.getCurrentFileIndex());
 				System.out.println("Checking File: " + file.getName());
+								
 				for(File targetFile : searchModel.getTargetFileList())
 				{
 					if(AppConfigConstants.BINARY_SEARCH.equals(searchMode))

@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import javax.swing.JProgressBar;
+
 /**
  * @author ott1982
  *
@@ -14,13 +16,14 @@ import java.util.List;
 public class SearchModel
 {
 	
-	File		sourceFile;
-	File		targetFile;
-	List<File>	sourceFileList;
-	List<File>	targetFileList;
-	File		currentActiveFile;
-	int			currentFileIndex;
-	int			totalMissingFiles;
+	private File			sourceFile;
+	private File			targetFile;
+	private List<File>		sourceFileList;
+	private List<File>		targetFileList;
+	private File			currentActiveFile;
+	private int				currentFileIndex;
+	private int				totalMissingFiles;
+	private JProgressBar 	progressBar;
 	
 	
 	/**
@@ -152,6 +155,18 @@ public class SearchModel
 		this.totalMissingFiles = totalMissingFiles;
 	}
 
+	/**
+	 * @return the progressBar
+	 */
+	public JProgressBar getProgressBar() {
+		return progressBar;
+	}
+	/**
+	 * @param progressBar the progressBar to set
+	 */
+	public void setProgressBar(JProgressBar progressBar) {
+		this.progressBar = progressBar;
+	}
 	public SearchModel() {
 		super();
 	}
