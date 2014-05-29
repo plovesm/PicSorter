@@ -9,6 +9,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -38,6 +40,7 @@ public class DirectorySelectionFrame extends JFrame
 	private JFileChooser 		targetChooser; 
 	private JFrame 				mainFrame;
 	private JPanel 				mainPanel;
+	private JPanel 				outputPanel;
 	private JPanel 				buttonPanel;
 	private SearchModel			searchModel = new SearchModel();
 	
@@ -65,6 +68,7 @@ public class DirectorySelectionFrame extends JFrame
          * 
          */
 		mainPanel = new JPanel(gridBag);
+		outputPanel = new JPanel(gridBag);
 		
 		/** Step 2a: Build Status bar for searchable files
 	     * 
@@ -164,7 +168,9 @@ public class DirectorySelectionFrame extends JFrame
 	    /** Step 3: Build output panel
 	     * 
 	     */
-	    JTextArea outputArea = new JTextArea(5, 20);
+	    JTextArea outputArea = new JTextArea(5, 100);
+	    //outputArea.setRows(5);
+	    //outputArea.setSize(mainPanel.getWidth(), 25);
 	    JScrollPane outputScrollPane = new JScrollPane(outputArea); 
 	    outputArea.setEditable(false);
 	    
@@ -186,7 +192,7 @@ public class DirectorySelectionFrame extends JFrame
 			}
 		});
 		
-		JButton btnSearch = new JButton("Quick Search");
+		final JButton btnSearch = new JButton("Quick Search");
 		btnSearch.addActionListener(new ActionListener()
 		{
 			@Override
@@ -199,8 +205,61 @@ public class DirectorySelectionFrame extends JFrame
 		    	// Reset the counter
 		    	System.err.println("Qsearch: " + searchModel.getTotalSourceFiles());
 		    	
+		    	
+		    	/*Runnable doProgressUpdate = new Runnable()
+				{
+
+					@Override
+					public void run() {
+						
+						while(searchModel.getCurrentFileIndex() < searchModel.getProgressBar().getMaximum())
+						{
+							// Update the progress bar
+							searchModel.getProgressBar().setValue(searchModel.getCurrentFileIndex());
+							System.err.println("inner Value: " + searchModel.getProgressBar().getValue());
+						}
+					}
+					
+				};
+				
+				SwingUtilities.invokeLater(doProgressUpdate);
+		    	*/
+		    	
+		    	btnSearch.setEnabled(false);
+		    	
 		    	Sleeper task = new Sleeper();
-                task.execute();		    	
+		    	task.addPropertyChangeListener(new PropertyChangeListener() {
+
+                    @Override
+                    public void propertyChange(PropertyChangeEvent evt) {
+                        String name = evt.getPropertyName();
+                        System.err.println("Name of Event fired: " + name);
+                        System.err.println("Value of Event fired: " + evt.getNewValue());
+                        if (name.equals("progress")) 
+                        {
+                            int progress = (Integer) evt.getNewValue();
+                            
+                            System.err.println("Progress of Event fired: " + progress);
+                            
+                            searchModel.getProgressBar().setValue(progress);
+                            
+                            System.err.println("Progress Bar value: " + searchModel.getProgressBar().getValue());
+                            repaint();
+                        } 
+                        else if (name.equals("state")) 
+                        {
+                        	Sleeper.StateValue state = (Sleeper.StateValue) evt.getNewValue();
+                            switch (state) {
+                                case DONE:
+                                	btnSearch.setEnabled(true);
+                                    break;
+                            }
+                        }
+                    }
+
+                });
+		    	
+		    	task.execute();		    	
 		    	
 		    	mainFrame.pack();
 		    	
@@ -265,7 +324,9 @@ public class DirectorySelectionFrame extends JFrame
 		mainFrame.getContentPane().add(mainPanel, BorderLayout.NORTH);
 		
 		// Output Area
-		mainFrame.getContentPane().add(outputScrollPane, BorderLayout.CENTER);
+		cons.insets = new Insets(1, 2, 8, 2);
+		outputPanel.add(outputScrollPane, cons);
+		mainFrame.getContentPane().add(outputPanel, BorderLayout.CENTER);
 		
 		// Bottom button panel
 		cons.insets = new Insets(1, 2, 8, 2);
@@ -296,19 +357,22 @@ public class DirectorySelectionFrame extends JFrame
                
             try
             {     
-            	System.err.println("Max: " + searchModel.getProgressBar().getMaximum());
+            	int max = 100;//= searchModel.getProgressBar().getMaximum();
+            	System.err.println("Max: " + max);
+            	
             	int progress = 0;
-            	while (progress < 100) //searchModel.getCurrentFileIndex() < searchModel.getProgressBar().getMaximum())
+            	while (progress < max)
             	{	
                     //pause thread and then update the progress
                     Thread.sleep(50);
-                    System.err.println("Max: " + searchModel.getProgressBar().getMaximum());
                     System.err.println("Current Index: " + searchModel.getCurrentFileIndex());
                     
-                    progress+=5;
+                    progress++;// = searchModel.getCurrentFileIndex();
+                    
+                    setProgress(progress);
                     
                     //Call the process method to update the GUI
-                    publish(progress); //searchModel.getCurrentFileIndex());
+                    //publish(progress); //searchModel.getCurrentFileIndex());
 
                 }
             	
@@ -316,6 +380,7 @@ public class DirectorySelectionFrame extends JFrame
             }
             catch(InterruptedException e)
             {
+            	e.printStackTrace();
             }
             return null;
         }

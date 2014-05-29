@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 
 import com.tallkids.picsorter.constants.AppConfigConstants;
 import com.tallkids.picsorter.model.SearchModel;
@@ -47,9 +46,6 @@ public class FileSearchUtil {
 		System.out.println("Search Dir: " + searchModel.getSourceDir());
 		System.out.println("Target Dir: " + searchModel.getTargetDir());
 		
-		// Default to quick search if null is passed in
-		searchMode = (searchMode == null) ? AppConfigConstants.QUICK_SEARCH : searchMode;
-		
 		// Search through the lists for matches
 		if(searchModel != null && 
 				searchModel.getSourceFileList() != null && 
@@ -59,43 +55,17 @@ public class FileSearchUtil {
 			searchModel.setTotalMissingFiles(0);
 			searchModel.setCurrentFileIndex(0);
 			
-						
 			for(File file : searchModel.getSourceFileList())
 			{
 				boolean match = false;
 				
 				// Increment the current file index
-				searchModel.setCurrentFileIndex(searchModel.getCurrentFileIndex() +1);
+				searchModel.setCurrentFileIndex(searchModel.getCurrentFileIndex() + 1);
 				
 				System.out.println("Checking File: " + file.getName());
-								
-				for(File targetFile : searchModel.getTargetFileList())
-				{
-					if(AppConfigConstants.BINARY_SEARCH.equals(searchMode))
-					{
-						try 
-						{
-							if(isFileBinaryEqual(file, targetFile))
-							{
-								match = true;
-								break;
-							}
-						} 
-						catch (IOException e) 
-						{
-							e.printStackTrace();
-						}
-					}
-					else
-					{
-						if(file.getName().equals(targetFile.getName()) &&
-								file.length() == targetFile.length())
-						{
-							match = true;
-							break;
-						}
-					}
-				}
+				
+				//Check if this file is backed up
+				match = isFileBackedUp(file, searchModel);				
 				
 				if(!match)
 				{
@@ -106,6 +76,62 @@ public class FileSearchUtil {
 		}
 	}
 	
+    public static boolean isFileBackedUp(File file, SearchModel searchModel)
+    {
+    	System.out.println("Checking File: " + file.getAbsolutePath());
+    	// TODO javadocs and null checks
+    	return isFileBackedUp(file, searchModel.getTargetFileList(), null);
+    }
+    
+    public static boolean isFileBackedUp(File file, String targetDir, String searchMode)
+    {
+    	
+    	File targetFile = new File(targetDir);
+    	
+    	List<File> targetList = traverseDirectory(targetFile, null);
+    	
+    	return isFileBackedUp(file, targetList, searchMode);
+    	
+    }
+    
+    public static boolean isFileBackedUp(File file, List<File> targetDirList, String searchMode)
+    {
+    	boolean match = false;
+    	
+    	// Default to quick search if null is passed in
+    	searchMode = (searchMode == null) ? AppConfigConstants.QUICK_SEARCH : searchMode;
+    			
+    	for(File targetFile : targetDirList)
+		{
+			if(AppConfigConstants.BINARY_SEARCH.equals(searchMode))
+			{
+				try 
+				{
+					if(isFileBinaryEqual(file, targetFile))
+					{
+						match = true;
+						break;
+					}
+				} 
+				catch (IOException e) 
+				{
+					e.printStackTrace();
+				}
+			}
+			else
+			{
+				if(file.getName().equals(targetFile.getName()) &&
+						file.length() == targetFile.length())
+				{
+					match = true;
+					break;
+				}
+			}
+		}
+		
+    	return match;
+    }
+    
 	/**
     * Compare binary files. Both files must be files (not directories) and exist.
     * 

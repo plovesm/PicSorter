@@ -6,7 +6,7 @@ package com.tallkids.picsorter.app;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import com.tallkids.picsorter.ui.DirectorySelectionFrame;
+import com.tallkids.picsorter.ui.TestFrame;
 
 /**
  * @author plovesm
@@ -20,7 +20,8 @@ public class PicSorterApp {
 	public static void main(String[] args) {
 		
 		// Step 0: Declare variables
-		DirectorySelectionFrame dirSelUI = new DirectorySelectionFrame();
+		//DirectorySelectionFrame dirSelUI = new DirectorySelectionFrame();
+		TestFrame dirSelUI = new TestFrame();
 		
 		// Step 1: Launch UI
 		try {
@@ -41,7 +42,7 @@ public class PicSorterApp {
 	       // handle exception
 	    }
 		
-		dirSelUI.buildDirectorySelection();
+		//dirSelUI.buildDirectorySelection();
 		
 		
 		
