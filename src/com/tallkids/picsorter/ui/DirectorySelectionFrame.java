@@ -249,9 +249,11 @@ public class DirectorySelectionFrame extends JFrame
                         else if (name.equals("state")) 
                         {
                         	Sleeper.StateValue state = (Sleeper.StateValue) evt.getNewValue();
+                        	System.out.println("State: " + state);
                             switch (state) {
                                 case DONE:
                                 	btnSearch.setEnabled(true);
+                                	System.out.println("Total missing files: " + searchModel.getTotalMissingFiles());
                                     break;
                             }
                         }
@@ -375,7 +377,7 @@ public class DirectorySelectionFrame extends JFrame
                     //publish(progress); //searchModel.getCurrentFileIndex());
 
                 }
-            	
+            	System.out.println("Total missing files1: " + searchModel.getTotalMissingFiles());
             	//publish(searchModel.getProgressBar().getMaximum());
             }
             catch(InterruptedException e)

@@ -70,7 +70,7 @@ public class TestFrame {
 					e.printStackTrace();
 				}
 
-                 JFrame frame = new JFrame("P Testing");
+                 JFrame frame = new JFrame("Backup Inspector");
                  frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                  frame.setLayout(new BorderLayout());
                  frame.add(new TestPane());
@@ -187,6 +187,7 @@ public class TestFrame {
                                 switch (state) {
                                     case DONE:
                                         start.setEnabled(true);
+                                        System.out.println("Total missing files: " + searchModel.getTotalMissingFiles());
                                         break;
                                 }
                             }
@@ -218,7 +219,7 @@ public class TestFrame {
             while (i <= max) {
                 System.err.println("Index Before: " + i);
                 
-                if(FileSearchUtil.isFileBackedUp(searchModel.getSourceFileList().get(i), searchModel))
+                if(!FileSearchUtil.isFileBackedUp(searchModel.getSourceFileList().get(i), searchModel))
                 {
                 	//increment the number of files
                 	searchModel.setTotalMissingFiles(searchModel.getTotalMissingFiles() + 1);
