@@ -70,7 +70,7 @@ public class TestFrame {
 					e.printStackTrace();
 				}
 
-                 JFrame frame = new JFrame("P Testing");
+                 JFrame frame = new JFrame("Backup Inspector");
                  frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                  frame.setLayout(new BorderLayout());
                  frame.add(new TestPane());
@@ -171,16 +171,6 @@ public class TestFrame {
                     // Populate the lists and then do the search
     				FileSearchUtil.populateSourceAndTargetLists(searchModel);
     				
-    				// Reset counter
-    				if(pbProgress.getPercentComplete() == 100)
-    				{
-    					System.err.println("Resetting...");
-    					
-    					searchModel.setCurrentFileIndex(0);
-    					pbProgress.setMaximum(searchModel.getTotalSourceFiles());
-        				pbProgress.setValue(0);
-    				}
-    				    				
                     ProgressWorker pw = new ProgressWorker();
                     pw.addPropertyChangeListener(new PropertyChangeListener() 
                     {
@@ -197,6 +187,7 @@ public class TestFrame {
                                 switch (state) {
                                     case DONE:
                                         start.setEnabled(true);
+                                        System.out.println("Total missing files: " + searchModel.getTotalMissingFiles());
                                         break;
                                 }
                             }

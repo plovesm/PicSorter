@@ -211,6 +211,40 @@ public class DirectorySelectionFrame extends JFrame
 		    	btnSearch.setEnabled(false);
 		    	
 		    	Sleeper task = new Sleeper();
+
+		    	task.addPropertyChangeListener(new PropertyChangeListener() {
+
+                    @Override
+                    public void propertyChange(PropertyChangeEvent evt) {
+                        String name = evt.getPropertyName();
+                        System.err.println("Name of Event fired: " + name);
+                        System.err.println("Value of Event fired: " + evt.getNewValue());
+                        if (name.equals("progress")) 
+                        {
+                            int progress = (Integer) evt.getNewValue();
+                            
+                            System.err.println("Progress of Event fired: " + progress);
+                            
+                            searchModel.getProgressBar().setValue(progress);
+                            
+                            System.err.println("Progress Bar value: " + searchModel.getProgressBar().getValue());
+                            repaint();
+                        } 
+                        else if (name.equals("state")) 
+                        {
+                        	Sleeper.StateValue state = (Sleeper.StateValue) evt.getNewValue();
+                        	System.out.println("State: " + state);
+                            switch (state) {
+                                case DONE:
+                                	btnSearch.setEnabled(true);
+                                	System.out.println("Total missing files: " + searchModel.getTotalMissingFiles());
+                                    break;
+                            }
+                        }
+                    }
+
+                });
+		    	
 		    	task.execute();		    	
 		    	
 		    	mainFrame.pack();
