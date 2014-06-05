@@ -203,62 +203,14 @@ public class DirectorySelectionFrame extends JFrame
 				// Set the max on the progress bar
 		    	searchModel.getProgressBar().setMaximum(searchModel.getTotalSourceFiles());
 		    	// Reset the counter
+		    	searchModel.getProgressBar().setValue(0);
+		    	repaint();
+		    	
 		    	System.err.println("Qsearch: " + searchModel.getTotalSourceFiles());
-		    	
-		    	
-		    	/*Runnable doProgressUpdate = new Runnable()
-				{
-
-					@Override
-					public void run() {
-						
-						while(searchModel.getCurrentFileIndex() < searchModel.getProgressBar().getMaximum())
-						{
-							// Update the progress bar
-							searchModel.getProgressBar().setValue(searchModel.getCurrentFileIndex());
-							System.err.println("inner Value: " + searchModel.getProgressBar().getValue());
-						}
-					}
-					
-				};
-				
-				SwingUtilities.invokeLater(doProgressUpdate);
-		    	*/
-		    	
+		    			    	
 		    	btnSearch.setEnabled(false);
 		    	
 		    	Sleeper task = new Sleeper();
-		    	task.addPropertyChangeListener(new PropertyChangeListener() {
-
-                    @Override
-                    public void propertyChange(PropertyChangeEvent evt) {
-                        String name = evt.getPropertyName();
-                        System.err.println("Name of Event fired: " + name);
-                        System.err.println("Value of Event fired: " + evt.getNewValue());
-                        if (name.equals("progress")) 
-                        {
-                            int progress = (Integer) evt.getNewValue();
-                            
-                            System.err.println("Progress of Event fired: " + progress);
-                            
-                            searchModel.getProgressBar().setValue(progress);
-                            
-                            System.err.println("Progress Bar value: " + searchModel.getProgressBar().getValue());
-                            repaint();
-                        } 
-                        else if (name.equals("state")) 
-                        {
-                        	Sleeper.StateValue state = (Sleeper.StateValue) evt.getNewValue();
-                            switch (state) {
-                                case DONE:
-                                	btnSearch.setEnabled(true);
-                                    break;
-                            }
-                        }
-                    }
-
-                });
-		    	
 		    	task.execute();		    	
 		    	
 		    	mainFrame.pack();
@@ -355,54 +307,41 @@ public class DirectorySelectionFrame extends JFrame
         @Override
         public Void doInBackground() throws InterruptedException {
                
-            try
-            {     
-            	int max = 100;//= searchModel.getProgressBar().getMaximum();
-            	System.err.println("Max: " + max);
-            	
-            	int progress = 0;
-            	while (progress < max)
-            	{	
-                    //pause thread and then update the progress
-                    Thread.sleep(50);
-                    System.err.println("Current Index: " + searchModel.getCurrentFileIndex());
-                    
-                    progress++;// = searchModel.getCurrentFileIndex();
-                    
-                    setProgress(progress);
-                    
-                    //Call the process method to update the GUI
-                    //publish(progress); //searchModel.getCurrentFileIndex());
-
-                }
-            	
-            	//publish(searchModel.getProgressBar().getMaximum());
-            }
-            catch(InterruptedException e)
-            {
-            	e.printStackTrace();
-            }
-            return null;
+        	 int i = 0;
+             int max = searchModel.getTotalSourceFiles(); //2000;
+             
+             // TODO null checks
+             
+             // Search the target directory for backups
+ 	    	//FileSearchUtil.searchDirectory(searchModel);
+ 	    	System.err.println("Max: " + max);
+             
+             while (i <= max) {
+                 System.err.println("Index Before: " + i);
+                 
+                 if(FileSearchUtil.isFileBackedUp(searchModel.getSourceFileList().get(i), searchModel))
+                 {
+                 	//increment the number of files
+                 	searchModel.setTotalMissingFiles(searchModel.getTotalMissingFiles() + 1);
+                 }
+                 
+                 i = searchModel.getCurrentFileIndex() + 1;//+= 10;
+                 searchModel.setCurrentFileIndex(i);
+                 System.err.println("Index After: " + i);
+                 
+                 int progress = Math.round(((float)i / (float)max) * 100f);
+                 
+                 setProgress(progress);
+                 try 
+                 {
+                 	Thread.sleep(0);
+                 } 
+                 catch (Exception e) 
+                 {
+                     e.printStackTrace();
+                 }
+             }
+             return null;
         }
-
-		/* (non-Javadoc)
-		 * @see javax.swing.SwingWorker#process(java.util.List)
-		 */
-		@Override
-		protected void process(List chunks) {
-			for (Object chunk : chunks) {
-				Integer val = (Integer)chunk;
-	        	 
-				searchModel.getProgressBar().setValue(val);
-				
-				System.err.println("Current Value: " + searchModel.getProgressBar().getValue());
-				System.err.println("Progress: " + searchModel.getProgressBar().getPercentComplete());
-			}
-						
-		}
-        
-        
-        	        
-     }
-	
+	}
 }

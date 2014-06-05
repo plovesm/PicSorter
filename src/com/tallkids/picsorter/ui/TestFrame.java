@@ -171,6 +171,16 @@ public class TestFrame {
                     // Populate the lists and then do the search
     				FileSearchUtil.populateSourceAndTargetLists(searchModel);
     				
+    				// Reset counter
+    				if(pbProgress.getPercentComplete() == 100)
+    				{
+    					System.err.println("Resetting...");
+    					
+    					searchModel.setCurrentFileIndex(0);
+    					pbProgress.setMaximum(searchModel.getTotalSourceFiles());
+        				pbProgress.setValue(0);
+    				}
+    				    				
                     ProgressWorker pw = new ProgressWorker();
                     pw.addPropertyChangeListener(new PropertyChangeListener() 
                     {
@@ -215,10 +225,17 @@ public class TestFrame {
 	    	//FileSearchUtil.searchDirectory(searchModel);
 	    	System.err.println("Max: " + max);
             
-            while (i <= max) {
+            while (i < max) 
+            {
                 System.err.println("Index Before: " + i);
                 
-                if(FileSearchUtil.isFileBackedUp(searchModel.getSourceFileList().get(i), searchModel))
+                if(i == 0 && i != searchModel.getCurrentFileIndex())
+                {
+                	// Reset
+                	searchModel.setCurrentFileIndex(0);
+                }
+                
+                if(!FileSearchUtil.isFileBackedUp(searchModel.getSourceFileList().get(i), searchModel))
                 {
                 	//increment the number of files
                 	searchModel.setTotalMissingFiles(searchModel.getTotalMissingFiles() + 1);
@@ -231,9 +248,12 @@ public class TestFrame {
                 int progress = Math.round(((float)i / (float)max) * 100f);
                 
                 setProgress(progress);
-                try {
-                    Thread.sleep(0);
-                } catch (Exception e) {
+                try 
+                {
+                	//Thread.sleep(0);
+                } 
+                catch (Exception e) 
+                {
                     e.printStackTrace();
                 }
             }
