@@ -6,6 +6,7 @@ package com.tallkids.picsorter.app;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import com.tallkids.picsorter.ui.BackupInspector;
 import com.tallkids.picsorter.ui.TestFrame;
 
 /**
@@ -21,7 +22,7 @@ public class PicSorterApp {
 		
 		// Step 0: Declare variables
 		//DirectorySelectionFrame dirSelUI = new DirectorySelectionFrame();
-		TestFrame dirSelUI = new TestFrame();
+		BackupInspector dirSelUI = new BackupInspector();
 		
 		// Step 1: Launch UI
 		try {

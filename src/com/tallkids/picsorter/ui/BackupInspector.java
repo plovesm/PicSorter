@@ -3,17 +3,27 @@
  */
 package com.tallkids.picsorter.ui;
 
+import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.GridBagLayout;
 
-import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+
+import com.tallkids.picsorter.model.Model;
+import com.tallkids.picsorter.ui.panels.ButtonPanel;
+import com.tallkids.picsorter.ui.panels.ContentBodyPanel;
 
 /**
  * @author ott1982
  *
  */
 public class BackupInspector {
+	
+	//create GribBagLayout and the GridBagLayout Constraints
+    BackupInspectorModelManager biMM = new BackupInspectorModelManager();
+	GridBagLayout gridBag = new GridBagLayout();
+    
 	
 	/**
 	 * Initial UI launch point for BackupInspector
@@ -48,14 +58,31 @@ public class BackupInspector {
 					e.printStackTrace();
 				}
 				
+				buildUIComponents();
+				
 			}
-			
-			// Create the main frame
-			BackupInspectorMainFrame biMainFrame = new BackupInspectorMainFrame("Backup Inspector");
-			
         });
 	}
 
-	
+	private void buildUIComponents()
+	{
+		// Create the main frame
+		BackupInspectorMainFrame biMainFrame = new BackupInspectorMainFrame("Backup Inspector");
+		biMM.setMainFrame(new Model<BackupInspectorMainFrame>(biMainFrame));
+		
+		// Create the content panel
+		ContentBodyPanel contentPane = new ContentBodyPanel(biMM, gridBag);
+		
+		// Create the button panel
+		ButtonPanel buttonPanel = new ButtonPanel(biMM, gridBag);
+		
+		// Add the panels
+		biMainFrame.add(contentPane, BorderLayout.NORTH);
+		biMainFrame.add(buttonPanel, BorderLayout.SOUTH);
+		
+		// Show the frame
+		biMainFrame.setVisible(true);
+		biMainFrame.pack();
+	}
 
 }

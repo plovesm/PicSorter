@@ -18,7 +18,7 @@ public class BackupInspectorMainFrame extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+	
 	/**
 	 * @param arg0
 	 * @throws HeadlessException
@@ -29,7 +29,7 @@ public class BackupInspectorMainFrame extends JFrame {
 		
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new BorderLayout());
-		this.pack();
+		this.setSize(300, 300);
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 	}
