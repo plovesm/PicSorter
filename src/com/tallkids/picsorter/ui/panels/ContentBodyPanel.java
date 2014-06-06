@@ -42,10 +42,15 @@ public class ContentBodyPanel extends Panel {
 		dirSelPanel.setSize(200, 200);
 		
 		OutputDashboardPanel outDashboardPanel = new OutputDashboardPanel(layout);
-		dirSelPanel.setSize(200, 100);
+		outDashboardPanel.setSize(100, 200);
 		
-		add(dirSelPanel);
-		add(outDashboardPanel);
+		cons.gridx = 0;
+		cons.gridy = 0;
+		add(dirSelPanel, cons);
+		
+		cons.gridx = 1;
+		cons.gridy = 0;
+		add(outDashboardPanel, cons);
 		
 	}
 
