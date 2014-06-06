@@ -38,11 +38,11 @@ public class ContentBodyPanel extends Panel {
 		GridBagConstraints cons = new GridBagConstraints();
 	    cons.insets = new Insets(5, 5, 5, 5);
 		
-		DirectorySelectionPanel dirSelPanel = new DirectorySelectionPanel(layout);
-		dirSelPanel.setSize(200, 200);
+	    // Holds the directory selection buttons
+		DirectorySelectionPanel dirSelPanel = new DirectorySelectionPanel(biMM, null, layout);
 		
+		// Holds the outputs like progress bar and console
 		OutputDashboardPanel outDashboardPanel = new OutputDashboardPanel(layout);
-		outDashboardPanel.setSize(100, 200);
 		
 		cons.gridx = 0;
 		cons.gridy = 0;

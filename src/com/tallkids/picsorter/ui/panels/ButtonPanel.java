@@ -3,6 +3,8 @@
  */
 package com.tallkids.picsorter.ui.panels;
 
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
@@ -41,6 +43,10 @@ public class ButtonPanel extends Panel {
 
 	private void addButtons() {
 		
+		GridBagConstraints cons = new GridBagConstraints();
+	    cons.insets = new Insets(5, 5, 5, 5);
+		
+		
 		JButton btnClose = new JButton("Cancel");
 		btnClose.addActionListener(new ActionListener()
 		{
@@ -58,7 +64,8 @@ public class ButtonPanel extends Panel {
 			}
 		});
 		
-		add(btnClose);
+		
+		add(btnClose, cons);
 	}
 
 }

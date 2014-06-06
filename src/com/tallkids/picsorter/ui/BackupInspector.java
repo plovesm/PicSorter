@@ -68,7 +68,7 @@ public class BackupInspector {
 	{
 		// Create the main frame
 		BackupInspectorMainFrame biMainFrame = new BackupInspectorMainFrame("Backup Inspector");
-		biMM.setMainFrame(new Model<BackupInspectorMainFrame>(biMainFrame));
+		biMM.setMainFrameModel(new Model<BackupInspectorMainFrame>(biMainFrame));
 		
 		// Create the content panel
 		ContentBodyPanel contentPane = new ContentBodyPanel(biMM, gridBag);
@@ -79,10 +79,11 @@ public class BackupInspector {
 		// Add the panels
 		biMainFrame.add(contentPane, BorderLayout.NORTH);
 		biMainFrame.add(buttonPanel, BorderLayout.SOUTH);
+		biMainFrame.pack();
 		
 		// Show the frame
 		biMainFrame.setVisible(true);
-		biMainFrame.pack();
+		
 	}
 
 }
