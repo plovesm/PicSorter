@@ -4,6 +4,8 @@
 package com.tallkids.picsorter.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.GridBagLayout;
 
@@ -11,6 +13,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import com.tallkids.picsorter.model.Model;
+import com.tallkids.picsorter.model.SearchModel;
 import com.tallkids.picsorter.ui.panels.ButtonPanel;
 import com.tallkids.picsorter.ui.panels.ContentBodyPanel;
 
@@ -66,6 +69,8 @@ public class BackupInspector {
 
 	private void buildUIComponents()
 	{
+		biMM.setSearchModel(new SearchModel());
+		
 		// Create the main frame
 		BackupInspectorMainFrame biMainFrame = new BackupInspectorMainFrame("Backup Inspector");
 		biMM.setMainFrameModel(new Model<BackupInspectorMainFrame>(biMainFrame));
@@ -75,6 +80,7 @@ public class BackupInspector {
 		
 		// Create the button panel
 		ButtonPanel buttonPanel = new ButtonPanel(biMM, gridBag);
+		buttonPanel.setBackground(Color.LIGHT_GRAY);
 		
 		// Add the panels
 		biMainFrame.add(contentPane, BorderLayout.NORTH);

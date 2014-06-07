@@ -28,5 +28,4 @@ public class Model<T>
 	{
 		this.payload = obj;
 	}
-
 }

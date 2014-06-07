@@ -3,6 +3,8 @@
  */
 package com.tallkids.picsorter.ui.panels;
 
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
@@ -13,7 +15,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 
 import com.tallkids.picsorter.constants.StyleConstants;
-import com.tallkids.picsorter.model.SearchModel;
 import com.tallkids.picsorter.ui.BackupInspectorModelManager;
 
 /**
@@ -30,28 +31,19 @@ public class DirectorySelectionPanel extends Panel {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * @param arg0
+	 * @param BackupInspectorModelManager
+	 * @param SearchModel
+	 * @param LayoutManager
 	 */
-	public DirectorySelectionPanel(BackupInspectorModelManager biMMIn, SearchModel sm, LayoutManager layout) {
+	public DirectorySelectionPanel(BackupInspectorModelManager biMMIn, LayoutManager layout) {
 		super(layout);
-		
-		final SearchModel searchModel;
-		
-		if(sm != null)
-		{
-			searchModel = sm;
-		}
-		else
-		{
-			searchModel = new SearchModel();
-		}
 		
 		if( biMM != null)
 		{
 			this.biMM = biMMIn;
 		}
 		
-		if(biMM.getMainFrameModel() != null)
+		if(biMM.getMainFrameModel() != null && biMM.getSearchModel() != null)
 		{
 			final JFileChooser sourceChooser = new JFileChooser();
 			sourceChooser.setCurrentDirectory(new java.io.File("."));
@@ -80,7 +72,7 @@ public class DirectorySelectionPanel extends Panel {
 				    	lblSourceOutput.setText(sourceDir);
 				    	   
 				    	// Set the source file
-				    	searchModel.setSourceFile(sourceChooser.getSelectedFile());
+				    	biMM.getSearchModel().setSourceFile(sourceChooser.getSelectedFile());
 				    	   
 				    	biMM.getMainFrameModel().getObject().pack();
 				    }
@@ -113,12 +105,27 @@ public class DirectorySelectionPanel extends Panel {
 				    	   
 				    	lblTargetOutput.setText(targetDir);
 				    	   
-				    	searchModel.setTargetFile(targetChooser.getSelectedFile());
+				    	biMM.getSearchModel().setTargetFile(targetChooser.getSelectedFile());
 				    	   
 				    	biMM.getMainFrameModel().getObject().pack();
 				    }
 				}
 			});
+		    
+		    GridBagConstraints cons = new GridBagConstraints();
+		    cons.insets = new Insets(5, 5, 5, 5);
+		    
+		    cons.gridx = 0;
+		    cons.gridy = 0;
+		    add(btnOpenSourceLocation, cons);
+
+		    cons.gridx = 0;
+		    cons.gridy = 1;
+		    add(btnOpenTargetLocation, cons);
+		}
+		else
+		{
+			// TODO error out when frame or searchmodel is null
 		}
 	}
 

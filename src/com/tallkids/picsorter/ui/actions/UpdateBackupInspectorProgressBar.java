@@ -6,6 +6,7 @@ package com.tallkids.picsorter.ui.actions;
 import javax.swing.SwingWorker;
 
 import com.tallkids.picsorter.model.SearchModel;
+import com.tallkids.picsorter.ui.BackupInspectorModelManager;
 import com.tallkids.picsorter.util.FileSearchUtil;
 
 /**
@@ -14,63 +15,48 @@ import com.tallkids.picsorter.util.FileSearchUtil;
  */
 public class UpdateBackupInspectorProgressBar extends SwingWorker<Object, Object> {
 	
-	private SearchModel searchModel;
+	private BackupInspectorModelManager biMM;
 	
 	/**
-	 * @param searchModel
+	 * @param biMM
 	 */
-	public UpdateBackupInspectorProgressBar(SearchModel searchModel) {
+	public UpdateBackupInspectorProgressBar(BackupInspectorModelManager biMM) {
 		super();
-		
-		// Protect the searchModel from being set to null
-		if(searchModel != null)
-		{
-			this.searchModel = searchModel;
-		}
-		else
-		{
-			// TODO error out and trap
-		}
+		this.biMM = biMM;	
 	}
 
 	@Override
 	protected Object doInBackground() throws Exception {
 		
 		int i = 0;
-        int max = searchModel.getTotalSourceFiles();
+        int max = biMM.getSearchModel().getTotalSourceFiles();
         
         // Search the target directory for backups
     	System.err.println("Max: " + max);
     	
     	// Reset the total missing files
-    	searchModel.setTotalMissingFiles(0);
+    	biMM.getSearchModel().setTotalMissingFiles(0);
     	
-        if(searchModel.getSourceFileList() != null && !searchModel.getSourceFileList().isEmpty())
+        if(biMM.getSearchModel().getSourceFileList() != null && !biMM.getSearchModel().getSourceFileList().isEmpty())
         {
         	while (i <= max) 
         	{
-                if(!FileSearchUtil.isFileBackedUp(searchModel.getSourceFileList().get(i), searchModel))
+                if(!FileSearchUtil.isFileBackedUp(biMM.getSearchModel().getSourceFileList().get(i), biMM.getSearchModel()))
                 {
                 	//increment the number of files
-                	searchModel.setTotalMissingFiles(searchModel.getTotalMissingFiles() + 1);
+                	biMM.getSearchModel().setTotalMissingFiles(biMM.getSearchModel().getTotalMissingFiles() + 1);
                 }
                 
                 // Update the loop index and current file index
-                i = searchModel.getCurrentFileIndex() + 1;
-                searchModel.setCurrentFileIndex(i);
+                i = biMM.getSearchModel().getCurrentFileIndex() + 1;
+                biMM.getSearchModel().setCurrentFileIndex(i);
                 
                 // Calculate the progress percentage
                 int progress = Math.round(((float)i / (float)max) * 100f);
                 
                 // Set the progress property of the SwingWorker
                 setProgress(progress);
-                
-                /* 
-                try {
-                    Thread.sleep(0);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }*/
+                                
             }
         }
 		

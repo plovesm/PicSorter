@@ -13,7 +13,7 @@ import javax.swing.JFrame;
  *
  */
 public class BackupInspectorMainFrame extends JFrame {
-
+	
 	/**
 	 * 
 	 */

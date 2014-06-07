@@ -3,6 +3,7 @@
  */
 package com.tallkids.picsorter.ui.panels;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.LayoutManager;
@@ -16,7 +17,6 @@ import com.tallkids.picsorter.ui.BackupInspectorModelManager;
  */
 public class ContentBodyPanel extends Panel {
 	
-	BackupInspectorModelManager biMM = new BackupInspectorModelManager();
 	
 	/**
 	 * 
@@ -29,20 +29,18 @@ public class ContentBodyPanel extends Panel {
 	 */
 	public ContentBodyPanel(BackupInspectorModelManager biMM, LayoutManager layout) {
 		super(layout);
-		
-		if(biMM != null)
-		{
-			this.biMM = biMM;
-		}
-		
+				
 		GridBagConstraints cons = new GridBagConstraints();
 	    cons.insets = new Insets(5, 5, 5, 5);
 		
 	    // Holds the directory selection buttons
-		DirectorySelectionPanel dirSelPanel = new DirectorySelectionPanel(biMM, null, layout);
+		DirectorySelectionPanel dirSelPanel = new DirectorySelectionPanel(biMM, layout);
+		//dirSelPanel.setBackground(Color.BLUE);
 		
 		// Holds the outputs like progress bar and console
-		OutputDashboardPanel outDashboardPanel = new OutputDashboardPanel(layout);
+		OutputDashboardPanel outDashboardPanel = new OutputDashboardPanel(biMM, layout);
+		//outDashboardPanel.setBackground(Color.CYAN);
+		
 		
 		cons.gridx = 0;
 		cons.gridy = 0;
