@@ -5,7 +5,6 @@ package com.tallkids.picsorter.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.GridBagLayout;
 

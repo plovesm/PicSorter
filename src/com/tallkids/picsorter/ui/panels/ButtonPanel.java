@@ -3,7 +3,6 @@
  */
 package com.tallkids.picsorter.ui.panels;
 
-import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.LayoutManager;
@@ -120,8 +119,15 @@ public class ButtonPanel extends Panel {
                                 case DONE:
                                 	btnSearch.setEnabled(true);
                                 	AppUtils.writeOutputLn(biMM, "Total missing files: " + biMM.getSearchModel().getTotalMissingFiles());
-                                    break;
-                            }
+                                    repaint();
+                                	break;
+								case PENDING:
+									break;
+								case STARTED:
+									break;
+								default:
+									break;
+	                            }
                         }
                     }
 
